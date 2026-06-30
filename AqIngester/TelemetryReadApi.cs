@@ -52,6 +52,9 @@ public class TelemetryReadApi
             pm1_0 = latest.Pm1_0,
             pm2_5 = latest.Pm2_5,
             pm10 = latest.Pm10,
+            co2 = latest.Co2,
+            tempC = latest.TempC,
+            rhPct = latest.RhPct,
             wifiRssi = latest.WifiRssi,
             fw = latest.Fw
         });
@@ -82,12 +85,21 @@ public class TelemetryReadApi
                 pm1_0_avg = Math.Round(g.Average(x => x.Pm1_0), 2),
                 pm2_5_avg = Math.Round(g.Average(x => x.Pm2_5), 2),
                 pm10_avg = Math.Round(g.Average(x => x.Pm10), 2),
+                co2_avg = Math.Round(g.Average(x => x.Co2), 2),
+                tempC_avg = Math.Round(g.Average(x => x.TempC), 2),
+                rhPct_avg = Math.Round(g.Average(x => x.RhPct), 2),
                 pm1_0_min = g.Min(x => x.Pm1_0),
                 pm1_0_max = g.Max(x => x.Pm1_0),
                 pm2_5_min = g.Min(x => x.Pm2_5),
                 pm2_5_max = g.Max(x => x.Pm2_5),
                 pm10_min = g.Min(x => x.Pm10),
-                pm10_max = g.Max(x => x.Pm10)
+                pm10_max = g.Max(x => x.Pm10),
+                co2_min = g.Min(x => x.Co2),
+                co2_max = g.Max(x => x.Co2),
+                tempC_min = g.Min(x => x.TempC),
+                tempC_max = g.Max(x => x.TempC),
+                rhPct_min = g.Min(x => x.RhPct),
+                rhPct_max = g.Max(x => x.RhPct)
             });
 
         var response = req.CreateResponse(HttpStatusCode.OK);
@@ -155,6 +167,16 @@ public class TelemetryReadApi
         var pm25 = ReadNumber(pm, "pm2_5");
         var pm10 = ReadNumber(pm, "pm10");
 
+        double co2 = 0;
+        double tempC = 0;
+        double rhPct = 0;
+        if (payload.TryGetProperty("scd41", out var scd41))
+        {
+            co2 = ReadNumber(scd41, "co2");
+            tempC = ReadNumber(scd41, "tempC");
+            rhPct = ReadNumber(scd41, "rhPct");
+        }
+
         int? wifiRssi = null;
         string? fw = null;
         if (payload.TryGetProperty("status", out var status))
@@ -172,6 +194,9 @@ public class TelemetryReadApi
             Pm1_0 = pm1,
             Pm2_5 = pm25,
             Pm10 = pm10,
+            Co2 = co2,
+            TempC = tempC,
+            RhPct = rhPct,
             WifiRssi = wifiRssi,
             Fw = fw
         };
@@ -223,6 +248,9 @@ public class TelemetryReadApi
         public double Pm1_0 { get; set; }
         public double Pm2_5 { get; set; }
         public double Pm10 { get; set; }
+        public double Co2 { get; set; }
+        public double TempC { get; set; }
+        public double RhPct { get; set; }
         public int? WifiRssi { get; set; }
         public string? Fw { get; set; }
     }
